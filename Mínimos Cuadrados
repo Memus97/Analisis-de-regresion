@@ -1,0 +1,29 @@
+###PRINCIPIO DE MINIMOS CUADRADOS
+
+x<-c(132,129,120,113.2,105,92,84,83.2,88.4,59,80,81.5,71,69.2)
+y<-c(46,48,51,52.1,54,52,59,58.7,61.6,64,61.4,54.6,58.8,58)
+
+datos<-data.frame(x,y)
+
+##1
+library(ggplot2)
+ggplot(datos, aes(x,y))+geom_point()+ggtitle("Diagrama de disperción 1")+geom_smooth(method = lm)
+# Relación negativa y fuerza media
+
+##2
+medx=mean(x)
+medy=mean(y)
+
+numerador<-c(sum((x-mean(x))*(y-mean(y))))
+denominador<-c(sum((x-mean(x))*(x-mean(x))))
+
+b1=numerador/denominador
+b1
+
+b0=medy-(b1*medx)
+b0
+
+##3
+y1=b0+(b1*x)
+ggplot(datos, aes(x,y))+geom_point()+ggtitle("Diagrama de disperción 2")+
+  geom_line(aes(x,y1),)

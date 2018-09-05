@@ -1,0 +1,168 @@
+########## Capitulo 2 #######################
+set.seed(1410)
+install.packages("ggplot2")
+library(ggplot2)
+## 2.3
+show(diamonds)
+dsmall <- diamonds[sample(nrow(diamonds), 100), ]
+show(dsmall)
+qplot(carat, price, data = diamonds)
+##qplot acepta funciones de variables como argumentos.
+qplot(log(carat), log(price), data = diamonds)
+## volumen del diamamte (x*y*z) y el quilate.
+qplot(carat, x * y * z, data = diamonds)
+## 2.4
+## Asignación del color del punto al color del diamante.
+qplot(carat, price, data = dsmall, colour = color)
+## Asignacion de forma por el corte.
+qplot(carat, price, data = dsmall, shape = cut)
+## Estetica (Color/Transparencia)
+qplot(carat, price, data = diamonds, alpha = I(1/10))
+qplot(carat, price, data = diamonds, alpha = I(1/100))
+qplot(carat, price, data = diamonds, alpha = I(1/200))
+## El color y la forma funcionan bien con variables categóricas ,
+## mientras que el tamaño funciona mejor con variables continuas.
+## 2.5
+## Geom: abreviatura de objeto geométrico, describe el tipo de objeto
+## que se utiliza para mostrar los datos.
+##  geom = "punto" dibuja puntos para producir un diagrama de dispersión. 
+## Este es el valor predeterminado cuando se proporcionan argumentos x e y a qplot ().
+##  geom = "smooth" ajusta un suavizador a los datos y muestra el error estándar.
+##  geom = "boxplot" produce un diagrama de caja y patillas para resumir la distribución
+## de un conjunto de puntos.
+##  geom = "path" and geom = "line" dibujar líneas entre los puntos de datos. 
+## Tradicionalmente, estos se usan para explorar las relaciones entre el tiempo
+## y otra variable, pero las líneas se pueden usar para unir observaciones conectadas 
+## de alguna otra manera. Un diagrama de líneas está restringido para producir líneas 
+## que viajan de izquierda a derecha, mientras que " path " pueden ir en cualquier 
+## dirección
+
+## Para distribuciones:
+##  Para variables continuas, geom = "histogram" dibuja un histograma, geom = "freqpoly"
+## un polígono de frecuencia, y geom = "density" crea un diagrama de densidad.
+##  Para variables discretas, geom = "bar" hace un diagrama de barras.
+
+## 2.51 Agregar un suavizador a una trama.
+## Se han combinado varios geoms mediante el suministro de un vector de nombres geom creados con c ().
+## Los geoms se superpondrán en el orden en que aparecen.
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"))
+qplot(carat, price, data = diamonds, geom = c("point", "smooth"))
+
+##  method = "loess", el valor predeterminado para n pequeño, usa una regresión local uniforme. 
+## La ondulación de la línea se controla mediante el parámetro de amplitud, que oscila entre 0 
+## (excesivamente ondulado) y 1 (no tan ondulado), como se muestra en la Figura.
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+      span = 0.2)
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+      span = 1)
+
+## Loess no funciona bien para grandes conjuntos de datos.
+## por lo que se usa un algoritmo de suavizado alternativo cuando n es mayor que 1,000.
+## mgcv library and use method = "gam"
+## fórmula = y ~ s (x) para ajustarse a un modelo aditivo generalizado. Esto es similar
+## a usar una spline con lm, pero el grado de suavidad se estima a partir de los datos. 
+## Para datos grandes, use la fórmula y ~ s (x, bs = "cs"). Esto se usa por defecto cuando hay más de 1,000 puntos.
+install.packages("nlme")
+library(mgcv)
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+       method = "gam", formula = y ~ s(x))
+## Otra opción. Generalizado v.s Estimacion a partir de los datos.
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+      method = "gam", formula = y ~ s(x, bs = "cs"))
+
+##  method = "lm" se ajusta a un modelo lineal. 
+## El valor predeterminado se ajustará a una línea recta a sus datos, o puede especificar formula = y ~ poly (x, 2) 
+## para especificar un polinomio de grado 2, o mejor, cargue el paquete splines y use una spline natural: formula = y ~ ns (x, 2) 
+## El segundo parÃ¡metro es el grado de libertad: un número mayor creará una curva de wigglier. 
+## Usted es libre de especificar cualquier fÃ³rmula que implique x e y.
+library(splines)
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+      method = "lm")
+qplot(carat, price, data = dsmall, geom = c("point", "smooth"),
+      method = "lm", formula = y ~ ns(x,5))
+##  method = "rlm" funciona como lm, pero usa un algoritmo de ajuste robusto 
+## para que los valores atípicos no afecten tanto al ajuste. Es parte del 
+## paquete MASS, así que recuerda cargarlo primero.
+install.packages("MASS")
+
+## 2.5.2 Diagramas de caja y puntos jittered
+##  Cuando un conjunto de datos incluye una variable categÃ³rica y una o más variables continuas,
+##  probablemente le interese saber cómo varían los valores de las variables continuas con los niveles de la variable categÃ³rica.
+## Los diagramas de caja y los puntos jittered ofrecen dos maneras de hacer esto. La figura siguiente explora cÃ³mo la distribuciÃ³n
+## del precio por quilate varía con el color del diamante usando jittering (geom = "jitter", izquierda) y diagramas de caja y bigotes (geom = "boxplot", derecha).
+qplot(color, price / carat, data = diamonds, geom = "jitter",
+      alpha = I(1 / 5))
+qplot(color, price / carat, data = diamonds, geom = "jitter",
+      alpha = I(1 / 50))
+qplot(color, price / carat, data = diamonds, geom = "jitter",
+      alpha = I(1 / 200))
+
+## 2.5.3 Histogram and density plots
+## Los grÃ¡ficos de histograma y densidad muestran la distribución de UNA SOLA variable. 
+qplot(carat, data = diamonds, geom = "histogram")
+qplot(carat, data = diamonds, geom = "density")
+
+## En la Figura, experimentamos con tres valores de binwidth: 1.0, 0.1 y 0.01. 
+## Solo en la trama con el ancho de contenedor más pequeño (derecha) vemos las
+## estrías que observamos en un diagrama de dispersión anterior, la mayoría en "bonitos" números de quilates.
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 1,
+      xlim = c(0,3))
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 0.1,
+      xlim = c(0,3))
+qplot(carat, data = diamonds, geom = "histogram", binwidth = 0.01,
+      xlim = c(0,3))
+## COLOR
+qplot(carat, data = diamonds, geom = "density", colour = color)
+qplot(carat, data = diamonds, geom = "histogram", fill = color)
+
+## 2.5.4 Bar charts
+## El análogo discreto del histograma es el gráfico de barras, geom = "bar". 
+## El bar geom cuenta el número de instancias de cada clase para que no tenga que tabular sus valores de antemano,
+## como con el gráfico de barras en la base R. Esto se ilustra en la Figura. El primer diagrama es un gráfico de 
+## barras simple de color diamante, y el segundo es un gráfico de barras de color diamante ponderado por quilate.
+## WEIGHT / PESO
+qplot(color, data = diamonds, geom = "bar")
+qplot(color, data = diamonds, geom = "bar", weight = carat) +
+  scale_y_continuous("carat")
+## 2.5.5 Series de tiempo con trazados de línea y camino
+## Los diagramas de líneas (line) y (path plots) caminos se usan generalmente para datos de series de tiempo. Los gráficos de líneas 
+## unen los puntos de izquierda a derecha, mientras que los gráficos de ruta se unen en el orden en que aparecen 
+## en el conjunto de datos.
+## Los diagramas de línea generalmente tienen tiempo en el eje x, que muestra cómo una sola variable ha cambiado 
+## con el tiempo. Los diagramas de ruta muestran cómo dos variables han cambiado simultáneamente con el tiempo, 
+## con el tiempo codificado en la forma en que los puntos se unen.
+
+
+## Conjunto de datos de economics 
+## Que contiene datos económicos de los EE. UU. Medidos durante los últimos 40 años. La figura muestra dos tramas
+## de desempleo en el tiempo, ambas producidas usando geom = "línea". El primero muestra una tasa de desempleo y el 
+## segundo muestra la mediana del número de semanas desempleadas. Ya podemos ver algunas diferencias en estas dos variables,
+## particularmente en el último pico, donde el porcentaje de desempleo es más bajo que en los picos precedentes, pero la 
+## duración del desempleo es alta.
+install.packages("economics")
+qplot(date, unemploy / pop, data = economics, geom = "line")
+qplot(date, uempmed, data = economics, geom = "line")
+
+show(economics)
+## Para examinar esta relación en mayor detalle, nos gustaría dibujar ambas series de tiempo en la misma parcela. 
+## La solución es unir puntos adyacentes en el tiempo con segmentos de línea, formando un diagrama de ruta.
+
+year <- function(x) as.POSIXlt(x)$year + 1900
+qplot(unemploy / pop, uempmed, data = economics,
+      geom = c("point", "path"))
+qplot(unemploy / pop, uempmed, data = economics,
+      geom = "path", colour = year(date)) + scale_area()
+## 2.6 Facetado
+## Faceting adopta un enfoque alternativo: crea tablas de gráficos dividiendo los datos en subconjuntos
+## y mostrando el mismo gráfico para cada subconjunto en una disposición que facilita la comparación.
+qplot(carat, data = diamonds, facets = color ~ .,
+      geom = "histogram", binwidth = 0.1, xlim = c(0, 3))
+## La Figura anteior ilustra esta técnica con dos gráficos, conjuntos de histogramas que muestran la distribución 
+## de quilates condicional en el color.
+qplot(carat, ..density.., data = diamonds, facets = color ~ .,
+      geom = "histogram", binwidth = 0.1, xlim = c(0, 3))
+## La figura anterior muestra proporciones, por lo que es más fácil comparar distribuciones independientemente de 
+## la abundancia relativa de diamantes de cada color. La sintaxis de ..density .. es nueva. El eje y del histograma 
+## no proviene de los datos originales, sino de la transformación estadística que cuenta el número de observaciones 
+## en cada contenedor. Usando ..density ... le dice a ggplot2 que mapee la densidad al eje y en lugar del uso 
+## predeterminado de conteo.

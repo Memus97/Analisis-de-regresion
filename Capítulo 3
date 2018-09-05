@@ -1,0 +1,130 @@
+#############EJERCICIOS CAPÍTULO 3############
+
+## 1
+install.packages("MASS")
+library("MASS")
+show(LakeHuron)
+help("LakeHuron")
+##a)
+plot(LakeHuron)
+mtext("Alturas del Lago Hurón")
+plot(mean(LakeHuron))
+mtext("Promedio de la altura del Lago Hurón")
+##b)
+x11()
+plot(LakeHuron,type="p")
+mtext("LAKEHURON",side=3,line = 0)
+identify(LakeHuron)
+##c)
+lag.plot(LakeHuron)
+
+## 2
+show(Animals)
+plot(Animals,xlab="Peso del Cuerpo",ylab="Peso del cerebro")
+plot(log(Animals),xlab="log peso del cuerpo",ylab="log peso del cerebro",pch=10)
+identify(log(Animals))
+#Los animales con el cerebro más grande son el 15,7,14
+
+##4
+x<-rnorm(10)
+x
+help(rnorm)
+y<-rnorm(10,mean=170,sd=4)
+y
+
+##5
+a11<-rnorm(10)
+a12<-rnorm(10)
+a13<-rnorm(10)
+a14<-rnorm(10)
+
+a21<-sample(1:1000,100)
+a22<-sample(1:1000,100)
+a23<-sample(1:1000,100)
+a24<-sample(1:1000,100)
+
+a31<-sample(1:1000,1000,replace = T)
+a32<-sample(1:1000,1000,replace = T)
+a33<-sample(1:1000,1000,replace = T)
+a34<-sample(1:1000,1000,replace = T)
+
+par(mfrow=c(3,4))
+plot(a11)
+plot(a12)
+plot(a13)
+plot(a14)
+plot(a21)
+plot(a22)
+plot(a23)
+plot(a24)
+plot(a31)
+plot(a32)
+plot(a33)
+plot(a34)
+#En la primer fila se puede observar en los gráficos menos datos
+#por lo que se aprecia mejor, además de que siguen un patrón
+
+##6
+x1<-runif(10)
+x1
+
+a111<-runif(10)
+a121<-runif(10)
+a131<-runif(10)
+a141<-runif(10)
+
+a211<-sample(1:1000,100)
+a221<-sample(1:1000,100)
+a231<-sample(1:1000,100)
+a241<-sample(1:1000,100)
+
+a311<-sample(1:1000,1000,replace = T)
+a321<-sample(1:1000,1000,replace = T)
+a331<-sample(1:1000,1000,replace = T)
+a341<-sample(1:1000,1000,replace = T)
+
+par(mfrow=c(3,4))
+plot(a111)
+plot(a121)
+plot(a131)
+plot(a141)
+plot(a211)
+plot(a221)
+plot(a231)
+plot(a241)
+plot(a311)
+plot(a321)
+plot(a331)
+plot(a341)
+
+##8
+show(hills)
+
+##a)
+par(mfrow=c(1,2))
+hist(hills$dist)+mtext("DISTANCIA",side=3,line = 0)
+hist(hills$climb)+mtext("ASCENSO",side=3,line = 0)
+
+##b)
+par(mfrow=c(1,2))
+plot(density(hills$dist))+mtext("DISTANCIA",side=3,line = 0)
+plot(density(hills$climb))+mtext("ASCENSO",side=3,line = 0)
+
+##c)
+par(mfrow=c(1,2))
+qqnorm(hills$dist)+mtext("DISTANCIA",side=3,line = 0)
+qqnorm(hills$climb)+mtext("ASCENSO",side=3,line = 0)
+
+##a)1
+hist(log(hills$dist))+mtext("DISTANCIA",side=3,line = 0)
+hist(log(hills$climb))+mtext("ASCENSO",side=3,line = 0)
+
+##b)1
+par(mfrow=c(1,2))
+plot(density(log(hills$dist)))+mtext("DISTANCIA",side=3,line = 0)
+plot(density(log(hills$climb)))+mtext("ASCENSO",side=3,line = 0)
+
+##c)1
+par(mfrow=c(1,2))
+qqnorm(log(hills$dist))+mtext("DISTANCIA",side=3,line = 0)
+qqnorm(log(hills$climb))+mtext("ASCENSO",side=3,line = 0)
